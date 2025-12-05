@@ -1,0 +1,103 @@
+id: "task.fix-imports"
+version: "1.0.0"
+scope: "refactoring"
+level: "task"
+priority: 3
+
+metadata:
+  author: "KB Labs"
+  tags: ["imports", "dependencies", "typescript"]
+  lastUpdated: "2025-12-04"
+
+description: |
+  Fix broken imports in a TypeScript package by analyzing dependencies
+  and updating import statements.
+
+inputs:
+  - name: packageName
+    type: string
+    required: true
+    description: "Name of the package to fix (e.g., 'mind-engine')"
+  - name: targetPath
+    type: string
+    required: false
+    description: "Specific path to target (optional)"
+
+strategies:
+  - "Analyze package.json dependencies first"
+  - "Scan for broken imports using grep"
+  - "Use Mind RAG to find correct import paths"
+  - "Resolve correct import paths based on tsconfig"
+  - "Update import statements incrementally"
+  - "Validate with TypeScript compiler after each change"
+
+instructions: |
+  # Fix Imports Workflow
+
+  1. **Discover Broken Imports**
+     ```bash
+     # Use DevKit to check imports
+     npx kb-devkit-check-imports --package {packageName}
+     ```
+
+  2. **Analyze Dependencies**
+     - Read package.json to see declared dependencies
+     - Check tsconfig paths for path aliases
+     - Use Mind RAG to find where modules are exported
+
+  3. **Fix Imports**
+     - Update import statements one file at a time
+     - Use correct paths based on package structure
+     - Follow KB Labs import conventions
+
+  4. **Validate**
+     ```bash
+     # Build to check TypeScript compilation
+     pnpm --filter @kb-labs/{packageName} run build
+     
+     # Re-run import checker
+     npx kb-devkit-check-imports --package {packageName}
+     ```
+
+checks:
+  - id: "no-circular-deps"
+    description: "Ensure no circular dependencies introduced"
+  - id: "no-broken-imports"
+    description: "All imports must resolve correctly"
+  - id: "structure-compliance"
+    description: "Follow KB Labs package structure conventions"
+
+policies:
+  allowWrite: true
+  allowDelete: false
+  restrictedPaths:
+    - "core/"
+    - "**/*.config.js"
+    - "**/package.json"
+  forbiddenActions:
+    - "modify package.json dependencies without approval"
+    - "change build configuration"
+
+mindIntegration:
+  enabled: true
+  queries:
+    - "Where are similar import fixes implemented?"
+    - "What is the package structure for {packageName}?"
+    - "Show me export statements from {targetModule}"
+  maxContextTokens: 2000
+
+llmConfig:
+  cheapModel: "gpt-4o-mini"
+  expensiveModel: "gpt-4o"
+  maxRetries: 2
+  temperature: 0.2
+
+examples:
+  - task: "Fix broken imports in mind-engine"
+    expectedSteps:
+      - "Read kb-labs-mind/packages/mind-engine/package.json"
+      - "Run npx kb-devkit-check-imports --package mind-engine"
+      - "Grep for import errors in source files"
+      - "Update import paths based on actual exports"
+      - "Run pnpm --filter @kb-labs/mind-engine run build"
+      - "Verify with kb-devkit-check-imports"

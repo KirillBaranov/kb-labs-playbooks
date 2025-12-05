@@ -1,0 +1,70 @@
+id: "domain.refactoring"
+version: "1.0.0"
+scope: "refactoring"
+level: "domain"
+priority: 2
+
+metadata:
+  author: "KB Labs"
+  tags: ["refactoring", "code-quality", "patterns"]
+  lastUpdated: "2025-12-04"
+
+description: |
+  Domain-level strategies for refactoring code in KB Labs projects.
+  Covers common refactoring patterns and best practices.
+
+strategies:
+  - "Identify code smells before refactoring"
+  - "Make small, incremental changes"
+  - "Run tests after each refactoring step"
+  - "Use DevKit tools to verify no regressions"
+  - "Update documentation and ADRs if architecture changes"
+
+instructions: |
+  # Refactoring Workflow
+
+  1. **Analyze Current Code**
+     - Use Mind RAG to understand the current implementation
+     - Identify dependencies and usage patterns
+     - Check for existing tests
+
+  2. **Plan Refactoring**
+     - Break down into small, safe steps
+     - Identify which tests need to be updated
+     - Consider backward compatibility
+
+  3. **Execute Refactoring**
+     - Make one change at a time
+     - Run `pnpm run build` after each step
+     - Run tests frequently
+     - Use git commits to checkpoint progress
+
+  4. **Verify Changes**
+     - Run `npx kb-devkit-check-imports` to verify imports
+     - Run `npx kb-devkit-ci` for full health check
+     - Ensure all tests pass
+     - Check for circular dependencies
+
+policies:
+  allowWrite: true
+  allowDelete: true
+  restrictedPaths:
+    - "**/dist/**"
+    - "**/node_modules/**"
+  forbiddenActions:
+    - "refactor without tests"
+    - "change public API without ADR"
+
+mindIntegration:
+  enabled: true
+  queries:
+    - "Show me similar refactoring patterns used before"
+    - "What are the dependencies of this code?"
+    - "Where is this function/class used?"
+  maxContextTokens: 2000
+
+llmConfig:
+  cheapModel: "gpt-4o-mini"
+  expensiveModel: "gpt-4o"
+  maxRetries: 2
+  temperature: 0.2

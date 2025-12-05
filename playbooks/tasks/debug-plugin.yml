@@ -1,0 +1,72 @@
+id: "task.debug-plugin"
+version: "1.0.0"
+scope: "task"
+level: "task"
+priority: 3
+
+metadata:
+  author: "KB Labs"
+  tags: ["debugging", "plugin", "troubleshooting"]
+  lastUpdated: "2025-12-03"
+
+description: |
+  Debug KB Labs plugin issues systematically.
+  Covers common plugin problems: manifest errors, handler failures, permission issues.
+
+inputs:
+  - name: pluginId
+    type: string
+    required: true
+  - name: errorMessage
+    type: string
+    required: false
+
+strategies:
+  - "Read plugin manifest.v2.ts to understand declared capabilities"
+  - "Check handler implementation for runtime errors"
+  - "Verify permissions match actual operations"
+  - "Use Mind RAG to find similar debugging patterns"
+  - "Check plugin logs for error traces"
+  - "Validate plugin contracts match implementation"
+
+checks:
+  - id: "manifest-valid"
+    description: "Plugin manifest follows v2 schema"
+  - id: "handlers-registered"
+    description: "All handlers properly registered"
+  - id: "permissions-sufficient"
+    description: "Declared permissions cover operations"
+
+policies:
+  allowWrite: false
+  allowDelete: false
+  restrictedPaths:
+    - "dist/**"
+    - "node_modules/**"
+  forbiddenActions:
+    - "modify plugin runtime"
+    - "bypass permission checks"
+
+mindIntegration:
+  enabled: true
+  queries:
+    - "How are plugin errors handled in {pluginId}?"
+    - "What are common plugin debugging patterns?"
+    - "Show similar manifest configurations for {pluginId}"
+  maxContextTokens: 3000
+
+llmConfig:
+  cheapModel: "gpt-4o-mini"
+  expensiveModel: "gpt-4o"
+  maxRetries: 2
+  temperature: 0.3
+
+examples:
+  - task: "Debug mind-cli handler failure"
+    expectedSteps:
+      - "Read kb-labs-mind/packages/mind-cli/src/manifest.v2.ts"
+      - "Check handler registration in index.ts"
+      - "Look for error logs using grep"
+      - "Compare permissions with actual operations"
+      - "Validate Zod schemas match inputs"
+      - "Check runtime context usage"

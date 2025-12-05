@@ -1,0 +1,89 @@
+id: "policy.security"
+version: "1.0.0"
+scope: "policy"
+level: "global"
+priority: 10
+
+metadata:
+  author: "KB Labs"
+  tags: ["security", "policy", "restrictions"]
+  lastUpdated: "2025-12-03"
+
+description: |
+  Security policies and restrictions for all KB Labs operations.
+  These policies are enforced across all playbooks and cannot be overridden.
+
+inputs: []
+
+strategies: []
+
+checks:
+  - id: "no-secrets-in-code"
+    description: "No API keys or secrets in source code"
+  - id: "no-arbitrary-code-execution"
+    description: "No eval() or Function() constructor"
+  - id: "safe-file-operations"
+    description: "File operations within allowed paths only"
+  - id: "validated-inputs"
+    description: "All user inputs must be validated"
+
+policies:
+  allowWrite: true
+  allowDelete: false
+
+  # Forbidden paths - NEVER modify these
+  restrictedPaths:
+    - "**/.env"
+    - "**/*.key"
+    - "**/*.pem"
+    - "**/*.secret"
+    - "**/credentials.json"
+    - "**/secrets/**"
+    - ".git/**"
+    - "node_modules/**"
+
+  # Forbidden operations - NEVER perform these
+  forbiddenActions:
+    - "commit secrets or API keys"
+    - "disable security checks"
+    - "bypass authentication"
+    - "execute arbitrary user input"
+    - "modify plugin runtime permissions"
+    - "read files outside workspace"
+    - "make network requests to unknown hosts"
+    - "spawn processes without validation"
+    - "use eval() or Function() constructor"
+    - "disable CORS or security headers"
+
+mindIntegration:
+  enabled: false  # Security policies don't need context
+
+llmConfig:
+  cheapModel: "gpt-4o-mini"
+  expensiveModel: "gpt-4o"
+  maxRetries: 1
+  temperature: 0.0  # Zero temperature for security decisions
+
+examples:
+  - task: "Validate file path before reading"
+    code: |
+      // Bad: Arbitrary path
+      const content = await fs.readFile(userInput);
+
+      // Good: Validated path
+      const safePath = path.join(workspaceRoot, path.normalize(userInput));
+      if (!safePath.startsWith(workspaceRoot)) {
+        throw new Error('Path outside workspace');
+      }
+      const content = await fs.readFile(safePath);
+
+  - task: "Never commit secrets"
+    code: |
+      // Bad: Hardcoded secret
+      const apiKey = 'sk-abc123';
+
+      // Good: Use environment variables
+      const apiKey = process.env.OPENAI_API_KEY;
+      if (!apiKey) {
+        throw new Error('API key not found in environment');
+      }

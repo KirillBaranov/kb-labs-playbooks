@@ -1,0 +1,73 @@
+id: "task.optimize-workflow"
+version: "1.0.0"
+scope: "task"
+level: "task"
+priority: 3
+
+metadata:
+  author: "KB Labs"
+  tags: ["optimization", "workflow", "performance"]
+  lastUpdated: "2025-12-03"
+
+description: |
+  Optimize KB Labs workflow execution performance.
+  Focus on DAG optimization, parallel execution, and resource usage.
+
+inputs:
+  - name: workflowId
+    type: string
+    required: true
+  - name: bottleneck
+    type: string
+    required: false
+
+strategies:
+  - "Analyze workflow DAG for parallelization opportunities"
+  - "Identify sequential steps that can run concurrently"
+  - "Check for redundant operations or duplicate work"
+  - "Use Mind RAG to find similar optimization patterns"
+  - "Profile execution time per step"
+  - "Optimize heavy operations with caching"
+  - "Consider State Broker for shared state"
+
+checks:
+  - id: "dag-valid"
+    description: "Workflow DAG remains valid after changes"
+  - id: "no-deadlocks"
+    description: "No circular dependencies introduced"
+  - id: "performance-improved"
+    description: "Execution time reduced"
+
+policies:
+  allowWrite: true
+  allowDelete: false
+  restrictedPaths:
+    - "workflow-runtime/**"
+  forbiddenActions:
+    - "break workflow contracts"
+    - "remove error handling"
+
+mindIntegration:
+  enabled: true
+  queries:
+    - "How is {workflowId} currently structured?"
+    - "What are workflow optimization patterns in the codebase?"
+    - "Show parallel execution examples in workflows"
+  maxContextTokens: 2500
+
+llmConfig:
+  cheapModel: "gpt-4o-mini"
+  expensiveModel: "gpt-4o"
+  maxRetries: 2
+  temperature: 0.2
+
+examples:
+  - task: "Optimize data processing workflow"
+    expectedSteps:
+      - "Read workflow YAML definition"
+      - "Identify dependencies between steps"
+      - "Find steps that can run in parallel"
+      - "Add parallel execution layers"
+      - "Add caching for expensive operations"
+      - "Test with workflow:run --dry-run"
+      - "Measure performance improvement"

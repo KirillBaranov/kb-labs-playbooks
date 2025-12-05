@@ -1,0 +1,101 @@
+id: "package.mind-engine"
+version: "1.0.0"
+scope: "package"
+level: "package"
+priority: 2
+
+metadata:
+  author: "KB Labs"
+  tags: ["mind", "rag", "search"]
+  lastUpdated: "2025-12-03"
+
+description: |
+  Package-specific instructions for @kb-labs/mind-engine.
+  Covers RAG architecture, hybrid search, and anti-hallucination patterns.
+
+inputs: []
+
+strategies:
+  - "Mind uses hybrid search: BM25 + vector embeddings + RRF fusion"
+  - "Always verify search results with anti-hallucination checks"
+  - "Use adaptive search weights based on query type"
+  - "Embeddings are deterministic fallback when OpenAI unavailable"
+  - "Index structure: scope → files → chunks with metadata"
+  - "Query modes: instant, auto, thinking (increasing complexity)"
+
+checks:
+  - id: "search-quality"
+    description: "Search confidence ≥0.6 for production queries"
+  - id: "no-hallucinations"
+    description: "All results verified against source"
+  - id: "performance"
+    description: "Query latency <5s for instant mode"
+
+policies:
+  allowWrite: true
+  allowDelete: false
+  restrictedPaths:
+    - ".kb/mind/index/**"
+  forbiddenActions:
+    - "bypass anti-hallucination checks"
+    - "modify search weights without benchmarks"
+
+mindIntegration:
+  enabled: true
+  queries:
+    - "What is the Mind engine architecture?"
+    - "How does hybrid search work in mind-engine?"
+    - "Show anti-hallucination verification implementation"
+  maxContextTokens: 3000
+
+llmConfig:
+  cheapModel: "gpt-4o-mini"
+  expensiveModel: "gpt-4o"
+  maxRetries: 2
+  temperature: 0.2
+
+architecture:
+  components:
+    - name: "VectorStore"
+      purpose: "Vector embeddings storage and similarity search"
+      files:
+        - "src/vector-store/**"
+
+    - name: "BM25Index"
+      purpose: "Lexical search with TF-IDF weighting"
+      files:
+        - "src/bm25-index.ts"
+
+    - name: "HybridSearch"
+      purpose: "RRF fusion of vector + BM25 results"
+      files:
+        - "src/hybrid-search.ts"
+
+    - name: "VerificationModule"
+      purpose: "Anti-hallucination result validation"
+      files:
+        - "src/verification/**"
+
+    - name: "QueryOrchestrator"
+      purpose: "Multi-step query decomposition"
+      files:
+        - "src/orchestration/**"
+
+examples:
+  - task: "Add new search feature"
+    expectedSteps:
+      - "Read hybrid-search.ts to understand current flow"
+      - "Check if feature breaks anti-hallucination"
+      - "Update adaptive weights if needed"
+      - "Add unit tests for new feature"
+      - "Run benchmarks: ./scripts/run-benchmarks.sh"
+      - "Verify confidence scores ≥0.7"
+
+  - task: "Debug low search quality"
+    expectedSteps:
+      - "Check query mode (instant/auto/thinking)"
+      - "Review adaptive weights for query type"
+      - "Inspect BM25 vs vector scores"
+      - "Check RRF fusion parameters"
+      - "Verify anti-hallucination not filtering too much"
+      - "Run benchmarks to measure impact"

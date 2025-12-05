@@ -1,0 +1,81 @@
+id: "domain.testing"
+version: "1.0.0"
+scope: "domain"
+level: "domain"
+priority: 2
+
+metadata:
+  author: "KB Labs"
+  tags: ["testing", "quality", "vitest"]
+  lastUpdated: "2025-12-03"
+
+description: |
+  Testing strategies for KB Labs projects.
+  Emphasizes practical testing with Vitest and real-world scenarios.
+
+inputs: []
+
+strategies:
+  - "Write tests that catch real bugs, not just increase coverage"
+  - "Test public APIs, not implementation details"
+  - "Use Vitest for fast feedback loop"
+  - "Mock external dependencies but not internal modules"
+  - "Test error paths as thoroughly as happy paths"
+  - "Use snapshot tests sparingly - prefer explicit assertions"
+  - "Integration tests > Unit tests > E2E tests (cost vs value)"
+
+checks:
+  - id: "tests-pass"
+    description: "All existing tests must pass"
+  - id: "coverage-maintained"
+    description: "Code coverage should not decrease"
+  - id: "no-flaky-tests"
+    description: "Tests must be deterministic"
+
+policies:
+  allowWrite: true
+  allowDelete: false
+  restrictedPaths:
+    - "src/**/*.ts"
+  allowedPaths:
+    - "**/*.spec.ts"
+    - "**/*.test.ts"
+    - "tests/**"
+  forbiddenActions:
+    - "disable existing tests"
+    - "add .skip to passing tests"
+    - "remove assertions"
+
+mindIntegration:
+  enabled: true
+  queries:
+    - "What are common testing patterns in this codebase?"
+    - "How are similar features tested?"
+    - "Show Vitest best practices"
+  maxContextTokens: 2000
+
+llmConfig:
+  cheapModel: "gpt-4o-mini"
+  expensiveModel: "gpt-4o"
+  maxRetries: 2
+  temperature: 0.2
+
+examples:
+  - task: "Write tests for new feature"
+    expectedSteps:
+      - "Identify public API surface"
+      - "Write happy path tests first"
+      - "Add error case tests"
+      - "Add edge case tests"
+      - "Mock external dependencies"
+      - "Run tests with pnpm test"
+      - "Check coverage report"
+
+  - task: "Fix failing tests"
+    expectedSteps:
+      - "Run tests to see failure"
+      - "Read test code and implementation"
+      - "Identify root cause"
+      - "Fix implementation or update test"
+      - "Verify tests pass"
+      - "Check no other tests broke"

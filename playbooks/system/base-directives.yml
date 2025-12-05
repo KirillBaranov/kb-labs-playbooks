@@ -1,0 +1,56 @@
+id: "system.base-directives"
+version: "1.0.0"
+scope: "system"
+level: "system"
+priority: 1
+
+metadata:
+  author: "KB Labs"
+  tags: ["system", "core", "directives"]
+  lastUpdated: "2025-12-04"
+
+description: |
+  Base system directives that apply to all AI operations in KB Labs ecosystem.
+  These are foundational rules that should be respected across all tasks.
+
+instructions: |
+  # Core Principles
+
+  1. **Always verify before modifying** - Use Mind RAG to search and understand code before making changes
+  2. **Respect existing patterns** - Follow the architectural patterns already established in the codebase
+  3. **Minimize changes** - Make the smallest change necessary to accomplish the task
+  4. **Preserve functionality** - Don't break existing tests or functionality
+  5. **Document decisions** - When making architectural choices, create or update ADRs
+
+  # KB Labs Standards
+
+  - Use TypeScript with strict mode enabled
+  - Follow monorepo structure with workspace packages
+  - Use pnpm for package management
+  - Respect DevKit conventions (naming, structure, dependencies)
+  - Write clear commit messages following conventional commits
+
+  # Quality Checks
+
+  - Run `pnpm run build` to ensure compilation succeeds
+  - Run `npx kb-devkit-ci` before committing major changes
+  - Check for circular dependencies with DevKit tools
+  - Validate imports are correct
+
+policies:
+  allowWrite: true
+  allowDelete: false
+  restrictedPaths:
+    - "**/*.config.js"
+    - "**/package.json"
+  forbiddenActions:
+    - "modify git history"
+    - "force push to main"
+    - "delete production data"
+
+mindIntegration:
+  enabled: true
+  queries:
+    - "What are the architectural patterns used in KB Labs?"
+    - "Show me similar implementations in the codebase"
+  maxContextTokens: 1000
